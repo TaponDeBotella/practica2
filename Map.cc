@@ -174,3 +174,13 @@ ostream & operator <<(ostream &os, const Map &c){
 
     return os; // y se devuelve el resultado
 }
+
+vector<int> Map::tamanyoMapa(){
+
+    vector<int> devolver = {-1,-1};
+    int sizeRow;
+    int sizeCol;
+
+    sizeRow = (int)map.size();
+    sizeCol = (int)map[0].size();
+}

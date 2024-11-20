@@ -12,7 +12,7 @@ bool List::isEmpty() const{
 
     bool var_devolver = false;
 
-    if(head==NULL){ // en caso de que la lista este vacia, el booleano pasa a ser verdadero
+    if(head==NULL && tail==NULL){ // en caso de que la lista este vacia, el booleano pasa a ser verdadero
         var_devolver = true;
     }
     
@@ -35,38 +35,76 @@ int List::range() const{
     return var_devolver;
 }
 
-void List::add(City ciudad, int distancia){ 
-    // se crea un nuevo nodo con la ciudad y la distancia pasada por parametro
-    Node *nuevo_nodo = new Node(ciudad);
-    nuevo_nodo->distance = distancia;
-    Node *auxiliar;
-    bool apto_para_anyadir = true;
+void List::add(City ciudad, int distancia) {
+  // se crea un nuevo nodo con la ciudad y la distancia pasada por parametro
+  Node *nuevo_nodo = new Node(ciudad);
+  nuevo_nodo->distance = distancia;
+  Node *auxiliar;
+  Node *previo = NULL;
+  bool apto_para_anyadir = true;
+  string nombre_ciudad1;
+  string nombre_ciudad2;
+  bool anyadido = false;
 
-    for(auxiliar = head; auxiliar != NULL; auxiliar = auxiliar->next){
+    // primero se comprueba que la lista no este vacia y si esta vacia, se anyade el nodo sin comprobar nada mas
+    if (head == NULL && tail == NULL){
 
-        if(auxiliar == nuevo_nodo){  // en caso de que la ciudad ya exista, no se anyade
-
-            apto_para_anyadir = false;
-        }
+        nuevo_nodo = head;
+        nuevo_nodo = tail;
+        anyadido = true;
     }
 
-    if(apto_para_anyadir == true){ // en caso de que sea apto, se anyade
-        for(auxiliar = head; auxiliar != NULL; auxiliar = auxiliar->next){
+    if(anyadido == false){
+        for (auxiliar = head; auxiliar != NULL && anyadido == false; auxiliar = auxiliar->next){
 
+            if (auxiliar == nuevo_nodo){ // en caso de que la ciudad ya exista, no se anyade
 
+                apto_para_anyadir = false;
+                auxiliar = NULL; // para que salga del bucle
+            }
         }
 
-    }
+        if (apto_para_anyadir == true){ // en caso de que sea apto, se anyade
+            for (auxiliar = head; auxiliar != NULL; auxiliar = auxiliar->next){
+
+                nombre_ciudad1 = auxiliar->city.getName(); // se consiguen los nombres para compararlos
+                nombre_ciudad2 = nuevo_nodo->city.getName();
+
+                if (nuevo_nodo->distance < auxiliar->distance || (nuevo_nodo->distance = auxiliar->distance && nombre_ciudad2 < nombre_ciudad1)){
+                    // si la distancia del nuevo nodo es menos que la del auxiliar, o si es la misma pero el nombre es menor en orden lexicografico
+                    // primero se anyade el nodo, sea donde sea. Luego se controla si se ha anyadido en la head o en la tail y se arregla la lista
+
+                    nuevo_nodo->next = auxiliar;
+                    nuevo_nodo->prev = previo;
+
+                    if (previo == NULL){ // en caso de que se anyada en la head
+
+                        head = nuevo_nodo;
+                    }
+
+                    if (auxiliar->next == NULL){ // en caso de que se anyada en la tail
+
+                        tail = nuevo_nodo;
+                    }
+
+                    anyadido = true; // para poder salir del bucle
+                }
+
+                previo = auxiliar; // para llevar un control de en que parte de la lista estamos
+            }
+        }
+    }   
 }
+
 
 City List::remove(string cityName){
 
     City ciudad_a_devolver = error; // en caso de que no encontrar la ciudad, se devuelve error
     City ciudad_auxiliar;
     string nombre_ciudad;
-    Node *auxiliar = head; // se empieza a buscar por la cabeza (head) de la lista
+    Node *auxiliar; // se empieza a buscar por la cabeza (head) de la lista
  
-    for(auxiliar; auxiliar!=NULL; auxiliar = auxiliar->next){ // se recorre la lista
+    for(auxiliar=head; auxiliar!=NULL; auxiliar = auxiliar->next){ // se recorre la lista
 
         ciudad_auxiliar = auxiliar->city;
         nombre_ciudad = ciudad_auxiliar.getName(); // primero se consigue el nombre de la ciudad para comparar
@@ -102,7 +140,7 @@ City List::remove(string cityName){
                         head = NULL;
                     }
 
-                    delete auxiliar;
+                    delete auxiliar; // y se borra el nodo
                 }
             }
 
@@ -113,7 +151,7 @@ City List::remove(string cityName){
                     auxiliar->prev = auxiliar->next;
                     auxiliar->next = auxiliar->prev; 
 
-                    delete auxiliar;
+                    delete auxiliar; // y se borra el nodo
                 }
             }
         }
@@ -126,12 +164,12 @@ int List::removeFromDistance(int distance){
 
     int numero_ciudades_eliminada = 0;
 
-    Node *auxiliar = head; // se empieza a recorrer la lista desde el primer elemento
+    Node *auxiliar; // se empieza a recorrer la lista desde el primer elemento
     int distancia_deCity;
     City ciudad_borrada;
     string nombre_ciudad;
 
-    for(auxiliar; auxiliar!=NULL; auxiliar = auxiliar->next){
+    for(auxiliar=head; auxiliar!=NULL; auxiliar = auxiliar->next){
 
         distancia_deCity = auxiliar->distance; // se almacena la distancia de la ciudad para poder usarla en la comparacion
 
@@ -145,30 +183,39 @@ int List::removeFromDistance(int distance){
             numero_ciudades_eliminada = numero_ciudades_eliminada + 1; // se incremente el contador de ciudades borradas;
         }
     }
+    
+    return numero_ciudades_eliminada;
 }
 
 City &List::get(int index){
 
     City* devolver = &error;
-    Node *auxiliar = head;
+    Node *auxiliar;
+    auxiliar = head;
 
     if(auxiliar!=NULL){ // en caso de que la lista no este vacia, se sigue con el metodo
+        if(index>=0 && index < tamanyo()){ // se comprueba que el index sea valido
 
-        for(auxiliar; auxiliar!=NULL; auxiliar = auxiliar->next){ // se recorre la lista entera
+            for(int i=0; i<index; i++){ // se recorre la lista hasta llegar al index que ha pasado el usuario
 
+                auxiliar = auxiliar->next; // se va cambiando el auxiliar tambien para poder sacarle luego la city
+            }
 
+            *devolver = auxiliar->city; // se consigue la city del nodo que esta en el index que nos han dado
         }
     }
 
-    return *devolver;
+    return *devolver; // se devuelve o error o la ciudad del index
 }
 
 void List::reversePrint() const{
 
-    if(head !=NULL){ // se comprueba que la lista no esta vacia
-        Node *auxiliar = tail; // se empieza a imprimir desde el ultimo elemento de la lista
+    Node *auxiliar;
 
-        for(auxiliar; auxiliar!=NULL; auxiliar = auxiliar->prev){
+    if(head !=NULL){ // se comprueba que la lista no esta vacia
+         // se empieza a imprimir desde el ultimo elemento de la lista
+
+        for(auxiliar=tail; auxiliar!=NULL; auxiliar = auxiliar->prev){
 
             cout << auxiliar << endl;
         }
@@ -178,9 +225,9 @@ void List::reversePrint() const{
 ostream & operator <<(ostream &os, const List &c){
 
     if(c.head !=NULL){ // se comprueba que la lista no esta vacia
-        List::Node *auxiliar = c.head; // se empieza a imprimir desde el primer elemento de la lista
+        List::Node *auxiliar; // se empieza a imprimir desde el primer elemento de la lista
 
-        for(auxiliar; auxiliar!=NULL; auxiliar = auxiliar->next){
+        for(auxiliar = c.head; auxiliar!=NULL; auxiliar = auxiliar->next){
 
             os << auxiliar << endl;
         }
@@ -191,12 +238,12 @@ ostream & operator <<(ostream &os, const List &c){
 
 int List::tamanyo(){
 
-    Node *auxiliar = head;
+    Node *auxiliar;
     int contador = 0;
 
     if(head!=NULL && tail!=NULL){
 
-        for(auxiliar; auxiliar!=NULL; auxiliar = auxiliar->next){
+        for(auxiliar = head; auxiliar!=NULL; auxiliar = auxiliar->next){
 
             contador = contador + 1;
         }

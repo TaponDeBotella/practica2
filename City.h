@@ -19,6 +19,7 @@ class City{
         string name;
         Coordinates coord;
         CityInfo info;
+        bool esInicioCrucero;
 
     public:
 
@@ -32,5 +33,7 @@ class City{
         int getId() const;
         CityInfo &getInfo();
         City(); // constructor por defecto
+        bool getInicioCrucero(); // devuelve el valor de esInicioCrucero
+        void setInicioCrucero(); // pone la variable esInicioCrucero como true
 };
 #endif

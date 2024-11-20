@@ -7,7 +7,8 @@ City::City(string name){
     id = -1; // siempre se inicializa a -1
     this->name = name; // el this-> en c++ es igual que el this. del java
     info = CityInfo(); // llamamos al constructor vacio de CityInfo y Coordinates para que obtengan sus valores por defecto
-    coord = Coordinates();    
+    coord = Coordinates(); 
+    esInicioCrucero = false;   
 }
 
 City::City(const City &c){ // constructor copia
@@ -16,12 +17,14 @@ City::City(const City &c){ // constructor copia
     name = c.name;
     info = c.info;
     coord = c.coord;
+    esInicioCrucero = c.esInicioCrucero;
 }
 
 City::City(){ // constructor por defecto
 
     name = ""; // inicializa el nombre de la ciudad con una cadena vacia
     id = -1;   // inicializa el id de la ciudad como -1
+    esInicioCrucero = false;
 
 }
 
@@ -93,4 +96,14 @@ CityInfo &City::getInfo(){
 void City::setInfo(CityInfo info){
 
     this->info = info; // se sustituye la informacion de la ciudad
+}
+
+bool City::getInicioCrucero(){
+
+    return esInicioCrucero;
+}
+
+void City::setInicioCrucero(){
+
+    esInicioCrucero = true;
 }

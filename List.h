@@ -73,5 +73,6 @@ class List{ // se crea la clase list, y dentro tendra el nodo
     City &get(int index);
     void reversePrint() const;
     int tamanyo(); // metodo que devuelve el size de la lista. Devuelve 0 si la lista esta vacia
+    
 };
 #endif

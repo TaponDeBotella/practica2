@@ -24,5 +24,6 @@ class Map{
         vector<vector<char>> &getMap();
         char getMapPosition(Coordinates coord) const;
         vector<City> &getCities();
+        vector<int> tamanyoMapa();
 };
 #endif
